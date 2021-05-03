@@ -5,15 +5,51 @@
     return value;
   };
 
+// fightOrSkip function
+var fightOrSkip = function() {
+  // ask player if they'd like to fight or skip using fightOrSkip function
+  var promptFight = window.prompt('Would you like to FIGHT or SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
+
+  // if the 'promptFight' is not a valid value, then execute the following statements.  // Conditional Recursive Function Call
+  if (promptFight === "" || promptFight === null) {
+    window.alert("You need to provide a valid answer! Please try again.");
+    // use return to call it gain and stop the rest of this function from running
+    return fightOrSkip();
+  }
+
+  // convert promptFight to all lowercase so we can check with less options
+  promptFight = promptFight.toLowerCase();
+  //if player picks "skip" confirm and then stop the loop
+  if (promptFight === "skip") {
+    //confirm player wants to skip
+    var confirmSkip = window.confirm("Are you sure you'd like to quit?");
+
+    // if yes (true), leave fight
+    if (confirmSkip) {
+      window.alert(playerInfo.name + " has decided to skip this fight. Goodbye!");
+      //subtract money form playerMoney for skipping, but don't let them go into the negative
+      playerInfo.money = Math.max(0, playerInfo.money - 10);
+      // stop wihle() loop using break; and enter next fight
+
+      //return true if player wants to leave
+      return true;
+    }
+  }
+  return false;
+};
+
 // fight function (now with parameter for enemy's name)
 var fight = function(enemy) {
 
   while (playerInfo.health > 0 && enemy.health > 0) {
-    // ask player if they'd like to fight or run
-    var promptFight = window.prompt('Would you like to FIGHT or SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
+    // ask player if they'd like to fight or skip using fightOrSkip function
+    if (fightOrSkip()) {
+      // if true, leave fight by breaking loop
+      break;
+    }
 
     // if player picks "skip" confirm and then stop the loop
-    if (promptFight === 'skip' || promptFight === 'SKIP') {
+    if (fightOrSkip === 'skip' || fightOrSkip === 'SKIP') {
       // confirm player wants to skip
       var confirmSkip = window.confirm("Are you sure you'd like to quit?");
 
@@ -137,30 +173,23 @@ var endGame = function() {
 var shop = function() {
   // ask player what they'd like to do
   var shopOptionPrompt = window.prompt(
-    'Would you like to REFILL your health, UPGRADE your attack, or LEAVE the store? Please enter one "REFILL", "UPGRADE", or "LEAVE" to make a choice.'
+    'Would you like to REFILL your health, UPGRADE your attack, or LEAVE the store? Please enter 1 for REFILL, 2 for UPGRADE, or 3 for LEAVE.'
   );
-
+    shopOptionPrompt = parseInt(shopOptionPrompt);
   // use switch case to carry out action
   switch (shopOptionPrompt) {
-    case 'REFILL': // new case
-    case 'refill':
+    case 1:
       playerInfo.refillHealth();
       break;
-
-    case 'UPGRADE': // new case
-    case 'upgrade':
+    case 2:
       playerInfo.upgradeAttack();
       break;
-      
-    case 'LEAVE': // new case
-    case 'leave':
+    case 3:
       window.alert('Leaving the store.');
-
       // do nothing, so function will end
       break;
     default:
       window.alert('You did not pick a valid option. Try again.');
-
       // call shop() again to force player to pick a valid option
       shop();
       break;
